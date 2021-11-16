@@ -1,16 +1,50 @@
-html,
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes moveDownAnimation {
+  100% {
+    background-position-y: 100%;
+  }
+}
+
+@layer utilities {
+  .noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url(/images/lines.jpeg);
+    z-index: 10;
+    background-size: 7px auto;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    opacity: 0.4;
+    animation: moveDownAnimation 150s linear infinite;
+  }
+
+  .emoji {
+    font-family: apple color emoji, segoe ui emoji, noto color emoji,
+      android emoji, emojisymbols, emojione mozilla, twemoji mozilla,
+      segoe ui symbol;
+  }
+
+  .youtube-space {
+    height: 200vh;
+    width: 100vw;
+  }
+
+  .youtube-vintage {
+    background: radial-gradient(transparent, black);
+  }
+}
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  cursor: url(/images/cursor.svg), auto;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
+a,
+button {
+  cursor: url(/images/pointer.svg), pointer;
 }
