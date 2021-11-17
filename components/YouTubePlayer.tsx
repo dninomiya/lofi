@@ -11,6 +11,8 @@ const YouTubePlayer = ({
     height: '390',
     width: '640',
     playerVars: {
+      listType: 'playlist',
+      list: 'PL0DVChfFgSa85wVKWF-r55_5005wRuQ4-',
       autoplay: 1,
       controls: 0,
       disablekb: 1,
@@ -23,11 +25,13 @@ const YouTubePlayer = ({
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full flex items-center justify-items-center">
+    <div className="fixed inset-0 w-full h-full flex items-center justify-items-center bg-black">
       <YouTube
-        videoId="DWcJFNfaw9c"
         opts={opts}
-        onReady={onReady}
+        onReady={(event) => {
+          onReady(event);
+          event.target.setShuffle(true);
+        }}
         className="youtube-space"
         onStateChange={onStateChange}
       />

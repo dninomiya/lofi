@@ -36,9 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         lastChanged: Date.now(),
       };
 
-      return onValue(ref(rtDB, '.info/connected'), (snapshot) => {
-        console.log(snapshot.val());
-
+      const unsubscribe = onValue(ref(rtDB, '.info/connected'), (snapshot) => {
         if (snapshot.val() == false) {
           setDoc(userStatusFirestoreRef, isOfflineStatus);
           return;
@@ -51,6 +49,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setDoc(userStatusFirestoreRef, isOnlineStatus);
           });
       });
+
+      return () => {
+        unsubscribe();
+      };
     }
   }, [user?.uid]);
 

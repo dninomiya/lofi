@@ -6,6 +6,7 @@ import useSound from 'use-sound';
 import { useAuth } from '../providers/AuthProvider';
 import { getMessagesQuery } from '../services/RoomService';
 import { Message } from '../types/Message';
+import Linkify from 'react-linkify';
 
 const Timeline = () => {
   const user = useAuth();
@@ -47,7 +48,9 @@ const Timeline = () => {
             <li key={message.id} className="flex">
               <span className="mr-1">😽</span>
               <div className="flex-1 overflow-hidden">
-                <span className="break-words mr-2">{message.body}</span>
+                <span className="break-words mr-2">
+                  <Linkify>{message.body}</Linkify>
+                </span>
                 <span className="text-xs opacity-50">
                   {formatDistanceToNowStrict(message.createdAt, {
                     addSuffix: true,

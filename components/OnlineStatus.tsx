@@ -17,7 +17,7 @@ const OnlineStatus = () => {
     <div>
       <p>
         <span className="emoji">👤</span>
-        {onlineUsers?.length}/4
+        {onlineUsers?.length || 0}/4
       </p>
     </div>
   );

@@ -11,7 +11,7 @@ const AuthActions = () => {
   if (user) {
     return (
       <button className="font-dot" onClick={logout}>
-        Leave Room
+        🚪
       </button>
     );
   }

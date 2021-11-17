@@ -1,8 +1,9 @@
-import { FormEvent, KeyboardEvent, KeyboardEventHandler } from 'react';
+import { KeyboardEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../providers/AuthProvider';
 import { addMessage } from '../services/RoomService';
 import { Message } from '../types/Message';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const MessageForm = () => {
   const {
@@ -26,15 +27,16 @@ const MessageForm = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.metaKey && event.key === 'Enter') {
+    if (event.metaKey && event.key === 'Enter' && isValid) {
       onSubmit(getValues());
     }
   };
 
   return (
     <form className="mb-1 text-right" onSubmit={handleSubmit(onSubmit)}>
-      <textarea
+      <TextareaAutosize
         onKeyDown={handleKeyDown}
+        placeholder="意気込みや成果を共有する"
         autoFocus
         className="bg-transparent w-full resize-none rounded"
         {...register('body', {
@@ -43,7 +45,7 @@ const MessageForm = () => {
       />
       <button
         disabled={!isValid}
-        className="text-sm disabled:opacity-40 disabled:text-white text-green-400"
+        className="text-sm disabled:opacity-40 disabled:text-white text-green-400 text-glow"
         type="submit"
       >
         <span className="emoji">⏎</span>(Cmd + Enter)

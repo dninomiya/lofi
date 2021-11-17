@@ -38,6 +38,14 @@
   .youtube-vintage {
     background: radial-gradient(transparent, black);
   }
+
+  .text-glow {
+    text-shadow: 0 0 10px #34d399;
+  }
+
+  .box-glow {
+    box-shadow: 0 0 10px #34d399;
+  }
 }
 
 body {
@@ -45,6 +53,6 @@ body {
 }
 
 a,
-button {
+button:not([disabled]) {
   cursor: url(/images/pointer.svg), pointer;
 }

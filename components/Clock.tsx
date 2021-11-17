@@ -19,7 +19,7 @@ const Clock = () => {
     };
   }, []);
 
-  return <p>{time}</p>;
+  return <p className="text-sm">{time}</p>;
 };
 
 export default Clock;
