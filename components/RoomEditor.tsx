@@ -1,7 +1,15 @@
+import { useRouter } from 'next/dist/client/router';
 import { useForm } from 'react-hook-form';
+import { createRoom } from '../services/RoomService';
 import { Room } from '../types/Room';
 
-const RoomEditor = () => {
+type Props = {
+  onComplete: VoidFunction;
+  room?: Room;
+};
+
+const RoomEditor = ({ onComplete, room }: Props) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -11,7 +19,14 @@ const RoomEditor = () => {
     mode: 'onChange',
   });
 
-  const submit = (data: Room) => {};
+  const submit = (data: Room) => {
+    if (room) {
+    } else {
+      createRoom(data).then((id) => {
+        router.push(id);
+      });
+    }
+  };
 
   const activityOptions = [
     { value: 'allDay', label: '終日' },

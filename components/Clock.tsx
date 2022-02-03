@@ -8,7 +8,7 @@ const Clock = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(
-        format(new Date(), 'bbbh時mm分ss秒（eee）', {
+        format(new Date(), 'M月d日(eee) bbbh時mm分ss秒', {
           locale: ja,
         })
       );

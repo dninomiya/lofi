@@ -7,38 +7,52 @@ import { useAuth } from '../providers/AuthProvider';
 import { getMessagesQuery } from '../services/RoomService';
 import { Message } from '../types/Message';
 import Linkify from 'react-linkify';
+import { useRouter } from 'next/dist/client/router';
+import { Room } from '../types/Room';
 
-const Timeline = () => {
+type Props = {
+  room: Room;
+};
+
+const Timeline = ({ room }: Props) => {
   const user = useAuth();
   const [messages, setMessages] = useState<Message[]>();
   const [playMessageSound] = useSound('/sounds/message.mp3');
+  const router = useRouter();
 
   useEffect(() => {
-    if (!user?.uid || !playMessageSound) {
+    if (!user?.uid || !playMessageSound || !router.query.id) {
       return;
     }
 
-    return onSnapshot(getMessagesQuery('xxx'), (snapshot) => {
-      console.log('fetched');
-      const items = snapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        } as Message;
-      });
-      setMessages(items);
+    return onSnapshot(
+      getMessagesQuery(router.query.id as string),
+      (snapshot) => {
+        const items = snapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          } as Message;
+        });
+        setMessages(items);
 
-      const latestMessage = items?.[0];
+        const latestMessage = items?.[0];
 
-      if (
-        latestMessage?.createdAt &&
-        differenceInSeconds(new Date(), latestMessage?.createdAt) < 3 &&
-        latestMessage?.uid !== user.uid
-      ) {
-        playMessageSound();
+        if (
+          latestMessage?.createdAt &&
+          differenceInSeconds(new Date(), latestMessage?.createdAt) < 3 &&
+          latestMessage?.uid !== user.uid
+        ) {
+          playMessageSound();
+        }
       }
-    });
-  }, [playMessageSound, user?.uid]);
+    );
+  }, [playMessageSound, user?.uid, router.query.id]);
+
+  const getRoomUser = (id: string) => {
+    const user = room.users.find((user) => user.uid === id);
+    return user;
+  };
 
   return (
     <div className="flex-1 overflow-auto">
@@ -46,7 +60,7 @@ const Timeline = () => {
         <ul>
           {messages?.map((message) => (
             <li key={message.id} className="flex">
-              <span className="mr-1">😽</span>
+              <span className="mr-1">{getRoomUser(message.uid)?.emoji}</span>
               <div className="flex-1 overflow-hidden">
                 <span className="break-words mr-2">
                   <Linkify>{message.body}</Linkify>

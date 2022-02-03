@@ -1,9 +1,11 @@
-import { KeyboardEvent } from 'react';
+import { useRouter } from 'next/dist/client/router';
+import { KeyboardEvent, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHotkeys } from 'react-hotkeys-hook';
+import TextareaAutosize from 'react-textarea-autosize';
 import { useAuth } from '../providers/AuthProvider';
 import { addMessage } from '../services/RoomService';
 import { Message } from '../types/Message';
-import TextareaAutosize from 'react-textarea-autosize';
 
 const MessageForm = () => {
   const {
@@ -15,14 +17,26 @@ const MessageForm = () => {
   } = useForm<Message>({
     mode: 'onChange',
   });
+
+  const { ref, ...rest } = register('body', {
+    required: true,
+  });
+
   const user = useAuth();
+  const router = useRouter();
+  const inputRef = useRef<HTMLTextAreaElement>();
+
+  useHotkeys('f', (e) => {
+    inputRef.current?.focus();
+    e.preventDefault();
+  });
 
   if (!user) {
     return null;
   }
 
   const onSubmit = (data: Message) => {
-    addMessage('xxx', user.uid, data.body);
+    addMessage(router.query.id as string, user.uid, data.body);
     reset();
   };
 
@@ -36,12 +50,14 @@ const MessageForm = () => {
     <form className="mb-1 text-right" onSubmit={handleSubmit(onSubmit)}>
       <TextareaAutosize
         onKeyDown={handleKeyDown}
-        placeholder="意気込みや成果を共有する"
+        placeholder="フリートーク"
         autoFocus
         className="bg-transparent w-full resize-none rounded"
-        {...register('body', {
-          required: true,
-        })}
+        {...rest}
+        ref={(e) => {
+          ref(e);
+          inputRef.current = e as HTMLTextAreaElement;
+        }}
       />
       <button
         disabled={!isValid}

@@ -1,3 +1,5 @@
+import { User } from './User';
+
 export type ActivityTime =
   | 'allDay'
   | 'earlyMorning'
@@ -17,4 +19,7 @@ export type Room = {
   private: boolean;
   activityTime: ActivityTime | null;
   levelLimit: LevelLimit;
+  createdAt: number;
+  users: User[];
+  lv: number;
 };

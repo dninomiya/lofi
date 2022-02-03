@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { classNames } from '../utils/classNames';
 
 const ExpBar = () => {
-  const LIMIT = 1800;
-  const [now, setNow] = useState<number>(1796);
+  const MINUTES = 25;
+  const LIMIT = MINUTES * 60;
+  const [now, setNow] = useState<number>(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
