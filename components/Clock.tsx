@@ -3,15 +3,11 @@ import { useEffect, useState } from 'react';
 import { ja } from 'date-fns/locale';
 
 const Clock = () => {
-  const [time, setTime] = useState<string>();
+  const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(
-        format(new Date(), 'M月d日(eee) bbbh時mm分ss秒', {
-          locale: ja,
-        })
-      );
+      setDate(new Date());
     }, 1000);
 
     return () => {
@@ -19,7 +15,13 @@ const Clock = () => {
     };
   }, []);
 
-  return <p className="text-sm">{time}</p>;
+  return (
+    <p className="text-sm">
+      {format(date, 'M月d日(eee) HH時mm分ss秒', {
+        locale: ja,
+      })}
+    </p>
+  );
 };
 
 export default Clock;

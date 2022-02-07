@@ -1,6 +1,6 @@
-import { onAuthStateChanged, User } from '@firebase/auth';
+import { onAuthStateChanged } from '@firebase/auth';
 import { onDisconnect, onValue, ref, set } from '@firebase/database';
-import { doc, setDoc } from '@firebase/firestore';
+import { doc, setDoc, onSnapshot, Unsubscribe } from '@firebase/firestore';
 import {
   createContext,
   ReactNode,
@@ -9,6 +9,8 @@ import {
   useState,
 } from 'react';
 import { auth, db, rtDB } from '../firebase/client';
+import { createUser } from '../services/UserService';
+import { User } from '../types/User';
 
 const AuthContext = createContext<User | null | undefined>(undefined);
 
@@ -16,15 +18,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    let unsubscribeUser: Unsubscribe;
+
+    return onAuthStateChanged(auth, (firebaseUser) => {
+      unsubscribeUser?.();
+
+      if (firebaseUser) {
+        const ref = doc(db, `users/${firebaseUser.uid}`);
+        unsubscribeUser = onSnapshot(ref, (result) => {
+          if (result.exists()) {
+            setUser(result.data() as User);
+          } else {
+            createUser(firebaseUser.uid);
+          }
+        });
+      } else {
+        setUser(null);
+      }
     });
   }, []);
 
   useEffect(() => {
-    if (user?.uid) {
-      const userStatusDatabaseRef = ref(rtDB, '/status/' + user?.uid);
-      const userStatusFirestoreRef = doc(db, '/status/' + user?.uid);
+    if (user?.id) {
+      const userStatusDatabaseRef = ref(rtDB, '/status/' + user?.id);
+      const userStatusFirestoreRef = doc(db, '/status/' + user?.id);
 
       const isOfflineStatus = {
         state: 'offline',
@@ -54,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         unsubscribe();
       };
     }
-  }, [user?.uid]);
+  }, [user?.id]);
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 };

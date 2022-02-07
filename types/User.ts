@@ -1,10 +1,8 @@
 export type User = {
-  uid: string;
+  id: string;
   name: string;
   emoji: string;
-  task: string;
-  exp: number;
+  tomato: number;
   lv: number;
-  isActive: boolean;
   lastLoggedInAt: number;
 };

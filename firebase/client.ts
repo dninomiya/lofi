@@ -27,4 +27,3 @@ export const db = getFirestore();
 export const storage = getStorage();
 export const auth = getAuth();
 export const rtDB = getDatabase();
-export const msg = getMessaging();

@@ -26,7 +26,7 @@ const YouTubeControler = ({
   useHotkeys('right', next);
   useHotkeys('left', prev);
   useHotkeys('space', () => {
-    if (target.getPlayerState() === 1) {
+    if (target?.getPlayerState() === 1) {
       pause();
     } else {
       play();

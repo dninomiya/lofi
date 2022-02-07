@@ -9,19 +9,11 @@ const AuthActions = () => {
   }
 
   if (user) {
-    return (
-      <button className="font-dot" onClick={logout}>
-        🚪
-      </button>
-    );
+    return <button onClick={logout}>🚪</button>;
   }
 
   if (user === null) {
-    return (
-      <button className="font-dot" onClick={login}>
-        Join Room
-      </button>
-    );
+    return <button onClick={login}>Join Room</button>;
   }
 
   return null;
