@@ -12,25 +12,15 @@ import useSWR from 'swr';
 import { auth, db } from '../firebase/client';
 import { Message } from '../types/Message';
 import { Room } from '../types/Room';
+import { User } from '../types/User';
 
-export const createRoom = async (data: Room): Promise<string> => {
+export const createRoom = async (data: Room, user: User): Promise<string> => {
   const newRoomRef = doc(collection(db, 'rooms'));
   const room: Room = {
     ...data,
     rid: newRoomRef.id,
     createdAt: Date.now(),
-    users: [
-      {
-        uid: auth.currentUser?.uid as string,
-        name: 'noname',
-        emoji: '🍦',
-        task: '',
-        exp: 0,
-        lv: 1,
-        isActive: true,
-        lastLoggedInAt: Date.now(),
-      },
-    ],
+    users: [user.id],
   };
 
   await setDoc(newRoomRef, {

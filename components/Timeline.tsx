@@ -21,7 +21,7 @@ const Timeline = ({ room }: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user?.uid || !playMessageSound || !router.query.id) {
+    if (!user?.id || !playMessageSound || !router.query.id) {
       return;
     }
 
@@ -41,18 +41,18 @@ const Timeline = ({ room }: Props) => {
         if (
           latestMessage?.createdAt &&
           differenceInSeconds(new Date(), latestMessage?.createdAt) < 3 &&
-          latestMessage?.uid !== user.uid
+          latestMessage?.uid !== user.id
         ) {
           playMessageSound();
         }
       }
     );
-  }, [playMessageSound, user?.uid, router.query.id]);
+  }, [playMessageSound, user?.id, router.query.id]);
 
-  const getRoomUser = (id: string) => {
-    const user = room.users.find((user) => user.uid === id);
-    return user;
-  };
+  // const getRoomUser = (id: string) => {
+  //   const user = room.users.find((user) => user.id === id);
+  //   return user;
+  // };
 
   return (
     <div className="flex-1 overflow-auto">
@@ -60,7 +60,7 @@ const Timeline = ({ room }: Props) => {
         <ul>
           {messages?.map((message) => (
             <li key={message.id} className="flex">
-              <span className="mr-1">{getRoomUser(message.uid)?.emoji}</span>
+              {/* <span className="mr-1">{getRoomUser(message.uid)?.emoji}</span> */}
               <div className="flex-1 overflow-hidden">
                 <span className="break-words mr-2">
                   <Linkify>{message.body}</Linkify>

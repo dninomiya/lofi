@@ -20,6 +20,6 @@ export type Room = {
   activityTime: ActivityTime | null;
   levelLimit: LevelLimit;
   createdAt: number;
-  users: User[];
+  users: string[];
   lv: number;
 };

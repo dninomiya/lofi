@@ -72,7 +72,7 @@ const Home: NextPage = () => {
               className={classNames('px-2', !isChatOpen && 'opacity-40')}
               onClick={toggleIsChatOpen}
             >
-              💬
+              ☕️
             </button>
             {user ? <UserProfile /> : <button onClick={login}>ログイン</button>}
             <Clock />
@@ -80,7 +80,7 @@ const Home: NextPage = () => {
 
           <main className="flex-1 grid grid-cols-3 overflow-hidden">
             <div className="py-4 px-6 col-span-2">
-              <MemberList users={room.users} />
+              {/* <MemberList users={room.users} /> */}
             </div>
             <div
               className={classNames(
@@ -89,11 +89,35 @@ const Home: NextPage = () => {
               )}
             >
               <div className="rounded-md bg-black bg-opacity-30 p-6 text-white flex flex-col h-full">
-                <MessageForm />
+                <MessageForm isVisible={isChatOpen} />
                 <Timeline room={room} />
               </div>
             </div>
           </main>
+
+          <div className="flex gap-4">
+            <button className="px-4 py-1 bg-red-500 text-white">
+              作業開始
+            </button>
+            <div className="grid grid-cols-4 gap-4 flex-1">
+              <div className="grid grid-cols-5 gap-2">
+                <div className="col-span-4 bg-green-400"></div>
+                <div className="col-span-1 bg-green-800"></div>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                <div className="col-span-4 bg-green-400"></div>
+                <div className="col-span-1 bg-green-800"></div>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                <div className="col-span-4 bg-green-400"></div>
+                <div className="col-span-1 bg-green-800"></div>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                <div className="col-span-4 bg-green-400"></div>
+                <div className="col-span-1 bg-green-800"></div>
+              </div>
+            </div>
+          </div>
 
           <footer className="flex px-6 items-center bg-black z-10 text-white justify-between">
             {target ? (

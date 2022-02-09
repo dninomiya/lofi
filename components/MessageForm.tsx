@@ -1,5 +1,5 @@
 import { useRouter } from 'next/dist/client/router';
-import { KeyboardEvent, useRef } from 'react';
+import { KeyboardEvent, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHotkeys } from 'react-hotkeys-hook';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -7,7 +7,11 @@ import { useAuth } from '../providers/AuthProvider';
 import { addMessage } from '../services/RoomService';
 import { Message } from '../types/Message';
 
-const MessageForm = () => {
+type Props = {
+  isVisible: boolean;
+};
+
+const MessageForm = ({ isVisible }: Props) => {
   const {
     handleSubmit,
     register,
@@ -31,12 +35,18 @@ const MessageForm = () => {
     e.preventDefault();
   });
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current?.focus();
+    }
+  }, [isVisible]);
+
   if (!user) {
     return null;
   }
 
   const onSubmit = (data: Message) => {
-    addMessage(router.query.id as string, user.uid, data.body);
+    addMessage(router.query.id as string, user.id, data.body);
     reset();
   };
 
@@ -50,7 +60,7 @@ const MessageForm = () => {
     <form className="mb-1 text-right" onSubmit={handleSubmit(onSubmit)}>
       <TextareaAutosize
         onKeyDown={handleKeyDown}
-        placeholder="フリートーク"
+        placeholder="ちょっと一息 ☕️"
         autoFocus
         className="bg-transparent w-full resize-none rounded"
         {...rest}

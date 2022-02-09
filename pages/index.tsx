@@ -14,7 +14,7 @@ const Home = () => {
     <div>
       <div className="container">
         <header className="py-4 flex justify-between items-center">
-          <h1>Rooms</h1>
+          <h1>🍅 PomoSpace</h1>
           <button onClick={() => setIsRoomOpen(true)}>create room</button>
         </header>
         <div className="grid grid-cols-4 gap-4">
