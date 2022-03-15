@@ -1,3 +1,4 @@
 export const Site = {
-  title: '精神と時の部屋',
+  title: 'もくもく会',
+  description: '仕事や勉強にもくもくと取り組む会',
 };

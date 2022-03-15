@@ -1,17 +1,15 @@
 import type { NextPage } from 'next';
-import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Clock from '../components/Clock';
 import MessageForm from '../components/MessageForm';
 import Timeline from '../components/Timeline';
-import UserProfile from '../components/user-profile';
+import UserProfile from '../components/UserProfileEditor';
 import YouTubeControler from '../components/YouTubeControler';
 import YouTubePlayer from '../components/YouTubePlayer';
 import { Site } from '../lib/site';
 import { useAuth } from '../providers/AuthProvider';
 import { login } from '../services/AuthService';
-import { useRoom } from '../services/RoomService';
 import { classNames } from '../utils/classNames';
 
 const Home: NextPage = () => {
@@ -49,7 +47,7 @@ const Home: NextPage = () => {
     <div>
       <Head>
         <title>{Site.title}</title>
-        <meta name="description" content={Site.title} />
+        <meta name="description" content={Site.description} />
       </Head>
 
       <main className="relative">
@@ -65,12 +63,13 @@ const Home: NextPage = () => {
             >
               💬
             </button>
-            {user ? <UserProfile /> : <button onClick={login}>ログイン</button>}
+            {user ? <UserProfile /> : <button onClick={login}>参加</button>}
             <a
               href="https://github.com/dninomiya/lofi/wiki"
               target="_blank"
               rel="noreferrer"
               className="px-2"
+              title="このサイトについて"
             >
               ℹ️
             </a>

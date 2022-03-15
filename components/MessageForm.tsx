@@ -48,7 +48,7 @@ const MessageForm = ({ isVisible }: Props) => {
     return (
       <p className="mb-6">
         <button onClick={login} className="text-pink-600">
-          匿名ログイン
+          匿名で参加
         </button>
         してコメントする
       </p>

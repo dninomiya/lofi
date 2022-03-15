@@ -34,7 +34,11 @@ const UserProfile = () => {
 
   return (
     <div>
-      <button className="px-2" onClick={() => setIsOpen(true)}>
+      <button
+        title="プロフィール編集"
+        className="px-2"
+        onClick={() => setIsOpen(true)}
+      >
         👤
       </button>
       <Modal
