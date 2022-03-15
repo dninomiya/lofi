@@ -1,6 +1,5 @@
 import { onAuthStateChanged } from '@firebase/auth';
-import { onDisconnect, onValue, ref, set } from '@firebase/database';
-import { doc, setDoc, onSnapshot, Unsubscribe } from '@firebase/firestore';
+import { doc, onSnapshot, Unsubscribe } from '@firebase/firestore';
 import {
   createContext,
   ReactNode,
@@ -8,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { auth, db, rtDB } from '../firebase/client';
+import { auth, db } from '../firebase/client';
 import { createUser } from '../services/UserService';
 import { User } from '../types/User';
 
@@ -37,41 +36,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   }, []);
-
-  useEffect(() => {
-    if (user?.id) {
-      const userStatusDatabaseRef = ref(rtDB, '/status/' + user?.id);
-      const userStatusFirestoreRef = doc(db, '/status/' + user?.id);
-
-      const isOfflineStatus = {
-        state: 'offline',
-        lastChanged: Date.now(),
-      };
-
-      const isOnlineStatus = {
-        state: 'online',
-        lastChanged: Date.now(),
-      };
-
-      const unsubscribe = onValue(ref(rtDB, '.info/connected'), (snapshot) => {
-        if (snapshot.val() == false) {
-          setDoc(userStatusFirestoreRef, isOfflineStatus);
-          return;
-        }
-
-        return onDisconnect(userStatusDatabaseRef)
-          .set(isOfflineStatus)
-          .then(() => {
-            set(userStatusDatabaseRef, isOnlineStatus);
-            setDoc(userStatusFirestoreRef, isOnlineStatus);
-          });
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [user?.id]);
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 };

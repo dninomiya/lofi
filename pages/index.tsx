@@ -1,3 +1,5 @@
+import { onDisconnect, onValue, push, ref, set } from 'firebase/database';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -7,6 +9,7 @@ import Timeline from '../components/Timeline';
 import UserProfile from '../components/UserProfileEditor';
 import YouTubeControler from '../components/YouTubeControler';
 import YouTubePlayer from '../components/YouTubePlayer';
+import { db, rtDB } from '../firebase/client';
 import { Site } from '../lib/site';
 import { useAuth } from '../providers/AuthProvider';
 import { login } from '../services/AuthService';
@@ -14,13 +17,37 @@ import { classNames } from '../utils/classNames';
 
 const Home: NextPage = () => {
   const [target, setTarget] = useState<any>();
+  const [onlineCount, setOnlineCount] = useState<number>();
   const [isChatOpen, setIsChatOpen] = useState<any>(true);
   const [playerState, setPlayerState] = useState<number>();
   const user = useAuth();
 
+  const connect = () => {
+    const myConnectionsRef = ref(rtDB, `connectedUsers/${Date.now()}`);
+    const connectedRef = ref(rtDB, '.info/connected');
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        const con = push(myConnectionsRef, true);
+        onDisconnect(con).remove();
+        set(con, true);
+      }
+    });
+  };
+
+  const getOnlineCount = async () => {
+    const statusRef = doc(db, 'status/online');
+    onSnapshot(statusRef, (snap) => {
+      const status = snap.data() as any;
+      setOnlineCount(status?.count || 0);
+    });
+  };
+
   useEffect(() => {
     const isClose = Boolean(localStorage.getItem('chatClose'));
     setIsChatOpen(!isClose);
+
+    connect();
+    getOnlineCount();
   }, []);
 
   const initTarget = (event: any) => {
@@ -45,11 +72,6 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <Head>
-        <title>{Site.title}</title>
-        <meta name="description" content={Site.description} />
-      </Head>
-
       <main className="relative">
         <YouTubePlayer onReady={initTarget} onStateChange={onStateChange} />
         <div className="flex flex-col fixed inset-0 z-10">
@@ -80,7 +102,13 @@ const Home: NextPage = () => {
             <div
               className="py-4 px-6 col-span-2 lg:block hidden"
               onClick={() => target?.playVideo()}
-            ></div>
+            >
+              {onlineCount !== undefined && (
+                <p className="opacity-40 text-sm">
+                  {onlineCount.toLocaleString()}人がもくもく中...
+                </p>
+              )}
+            </div>
             <div
               className={classNames(
                 'col-span-1 p-4 h-full overflow-hidden',

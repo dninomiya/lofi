@@ -74,7 +74,7 @@ const MessageForm = ({ isVisible }: Props) => {
     <form className="mb-1 text-right" onSubmit={handleSubmit(onSubmit)}>
       <TextareaAutosize
         onKeyDown={handleKeyDown}
-        placeholder="意気込みなど"
+        placeholder="ちょっと一息...☕️"
         autoFocus
         className="bg-transparent w-full resize-none rounded"
         {...rest}
