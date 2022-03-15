@@ -55,13 +55,17 @@ const YouTubeControler = ({
       </button>
       {target && (
         <a
-          className="pl-2"
+          className="pl-2 flex-1"
           href={target.playerInfo?.videoUrl}
           rel="noreferrer"
           target="_blank"
         >
-          <h2 className="font-bold">{target.playerInfo?.videoData?.title}</h2>
-          <p className="text-sm">{target.playerInfo?.videoData?.author}</p>
+          <h2 className="font-bold truncate">
+            {target.playerInfo?.videoData?.title}
+          </h2>
+          <p className="text-sm truncate">
+            {target.playerInfo?.videoData?.author}
+          </p>
         </a>
       )}
     </div>

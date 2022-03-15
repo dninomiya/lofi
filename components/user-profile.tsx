@@ -1,11 +1,16 @@
 import { BaseEmoji, Emoji, Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useAuth } from '../providers/AuthProvider';
 import { logout } from '../services/AuthService';
 import { updateUser } from '../services/UserService';
 import Modal from './Modal';
+
+type FormValue = {
+  name: string;
+  emoji: string;
+};
 
 const UserProfile = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -14,23 +19,17 @@ const UserProfile = () => {
   const {
     handleSubmit,
     register,
+    watch,
+    control,
     formState: { isValid },
-  } = useForm();
+  } = useForm<FormValue>();
 
   if (!user) {
     return null;
   }
 
-  const updateEmoji = (emoji: BaseEmoji) => {
-    updateUser(user.id, {
-      emoji: emoji.id,
-    });
-  };
-
-  const updateName = (data: { name: string }) => {
-    updateUser(user.id, {
-      name: data.name,
-    });
+  const submit = (data: FormValue) => {
+    updateUser(user.id, data);
   };
 
   return (
@@ -44,47 +43,54 @@ const UserProfile = () => {
         onClose={() => setIsOpen(false)}
       >
         <div className="mb-6">
-          <div className="flex gap-4">
+          <form onSubmit={handleSubmit(submit)} className="flex gap-4">
             <button
+              type="button"
               onClick={() => setIsEmojiPickerOpen((status) => !status)}
               className="w-14 h-14 border-gray-800 border-2 grid place-content-center rounded-lg"
             >
-              <Emoji size={32} emoji={user.emoji} />
+              <Emoji size={32} emoji={watch('emoji') || user.emoji} />
             </button>
-            <div className="flex-1">
-              <form onSubmit={handleSubmit(updateName)}>
-                <input
-                  type="text"
-                  autoComplete="off"
-                  className="bg-transparent mb-2 rounded border-gray-800 border-2"
-                  defaultValue={user.name}
-                  {...register('name', {
-                    required: true,
-                  })}
-                />
-                <button disabled={!isValid}>更新</button>
-              </form>
-            </div>
-          </div>
+            <input
+              type="text"
+              autoComplete="off"
+              className="flex-1 min-w-0 bg-transparent rounded border-gray-800 border-2"
+              defaultValue={user.name}
+              {...register('name', {
+                required: true,
+              })}
+            />
+            <button disabled={!isValid}>更新</button>
+          </form>
         </div>
 
         {isEmojiPickerOpen && (
-          <Picker
-            theme="dark"
-            title="アイコンを選ぶ"
-            emoji="point_up"
-            onSelect={updateEmoji}
-          />
+          <div>
+            <Controller
+              name="emoji"
+              control={control}
+              render={(props) => (
+                <Picker
+                  theme="dark"
+                  title="アイコンを選ぶ"
+                  emoji="point_up"
+                  onSelect={(emoji) => props.field.onChange(emoji.id)}
+                />
+              )}
+            />
+          </div>
         )}
 
-        <button onClick={() => setIsOpen(false)}>閉じる</button>
+        <div className="flex items-center justify-between mt-6">
+          <button onClick={() => setIsOpen(false)}>閉じる</button>
 
-        <button
-          className="text-sm text-gray-700 ml-auto block"
-          onClick={logout}
-        >
-          ログアウト
-        </button>
+          <button
+            className="text-sm text-gray-700 ml-auto block"
+            onClick={logout}
+          >
+            ログアウト
+          </button>
+        </div>
       </Modal>
     </div>
   );

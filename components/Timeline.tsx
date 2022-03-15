@@ -1,77 +1,52 @@
 import { onSnapshot } from '@firebase/firestore';
-import { differenceInSeconds, formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { Emoji } from 'emoji-mart';
 import { useEffect, useState } from 'react';
-import useSound from 'use-sound';
-import { useAuth } from '../providers/AuthProvider';
+import Linkify from 'react-linkify';
 import { getMessagesQuery } from '../services/RoomService';
 import { Message } from '../types/Message';
-import Linkify from 'react-linkify';
-import { useRouter } from 'next/dist/client/router';
-import { Room } from '../types/Room';
 
-type Props = {
-  room: Room;
-};
-
-const Timeline = ({ room }: Props) => {
-  const user = useAuth();
+const Timeline = () => {
   const [messages, setMessages] = useState<Message[]>();
-  const [playMessageSound] = useSound('/sounds/message.mp3');
-  const router = useRouter();
 
   useEffect(() => {
-    if (!user?.id || !playMessageSound || !router.query.id) {
-      return;
-    }
+    return onSnapshot(getMessagesQuery('global'), (snapshot) => {
+      const items = snapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        } as Message;
+      });
+      setMessages(items);
+    });
+  }, []);
 
-    return onSnapshot(
-      getMessagesQuery(router.query.id as string),
-      (snapshot) => {
-        const items = snapshot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          } as Message;
-        });
-        setMessages(items);
-
-        const latestMessage = items?.[0];
-
-        if (
-          latestMessage?.createdAt &&
-          differenceInSeconds(new Date(), latestMessage?.createdAt) < 3 &&
-          latestMessage?.uid !== user.id
-        ) {
-          playMessageSound();
-        }
-      }
-    );
-  }, [playMessageSound, user?.id, router.query.id]);
-
-  // const getRoomUser = (id: string) => {
-  //   const user = room.users.find((user) => user.id === id);
-  //   return user;
-  // };
+  if (messages === undefined) {
+    return null;
+  }
 
   return (
     <div className="flex-1 overflow-auto">
       {messages?.length ? (
-        <ul>
+        <ul className="space-y-4">
           {messages?.map((message) => (
-            <li key={message.id} className="flex">
-              {/* <span className="mr-1">{getRoomUser(message.uid)?.emoji}</span> */}
-              <div className="flex-1 overflow-hidden">
-                <span className="break-words mr-2">
-                  <Linkify>{message.body}</Linkify>
-                </span>
-                <span className="text-xs opacity-50">
-                  {formatDistanceToNowStrict(message.createdAt, {
-                    addSuffix: true,
-                    locale: ja,
-                  })}
-                </span>
-              </div>
+            <li key={message.id}>
+              <p className="break-words">
+                <Linkify>{message.body}</Linkify>
+              </p>
+              {message.emoji && message.name && (
+                <p className="flex mt-1 items-center space-x-1 flex-wrap text-xs opacity-60">
+                  <Emoji native size={16} emoji={message.emoji} />
+                  <span>{message.name}</span>
+                  <span>
+                    {formatDistanceToNowStrict(message.createdAt, {
+                      addSuffix: true,
+                      locale: ja,
+                    })}
+                  </span>
+                </p>
+              )}
             </li>
           ))}
         </ul>

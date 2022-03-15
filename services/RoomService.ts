@@ -3,13 +3,13 @@ import {
   collection,
   doc,
   getDoc,
-  setDoc,
   getDocs,
   orderBy,
   query,
+  setDoc,
 } from '@firebase/firestore';
 import useSWR from 'swr';
-import { auth, db } from '../firebase/client';
+import { db } from '../firebase/client';
 import { Message } from '../types/Message';
 import { Room } from '../types/Room';
 import { User } from '../types/User';
@@ -38,11 +38,13 @@ export const getRoom = async (id: string) => {
   return data;
 };
 
-export const addMessage = async (roomId: string, uid: string, body: string) => {
+export const addMessage = async (
+  roomId: string,
+  data: Pick<Message, 'name' | 'emoji' | 'body'>
+) => {
   const messages = collection(db, `rooms/${roomId}/messages`);
   const message: Omit<Message, 'id'> = {
-    uid,
-    body,
+    ...data,
     createdAt: Date.now(),
   };
   return addDoc(messages, message);

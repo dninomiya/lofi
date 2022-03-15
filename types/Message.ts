@@ -2,5 +2,6 @@ export type Message = {
   id: string;
   body: string;
   createdAt: number;
-  uid: string;
+  name: string;
+  emoji: string;
 };

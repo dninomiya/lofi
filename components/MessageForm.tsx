@@ -1,9 +1,9 @@
-import { useRouter } from 'next/dist/client/router';
 import { KeyboardEvent, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHotkeys } from 'react-hotkeys-hook';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useAuth } from '../providers/AuthProvider';
+import { login } from '../services/AuthService';
 import { addMessage } from '../services/RoomService';
 import { Message } from '../types/Message';
 
@@ -27,7 +27,6 @@ const MessageForm = ({ isVisible }: Props) => {
   });
 
   const user = useAuth();
-  const router = useRouter();
   const inputRef = useRef<HTMLTextAreaElement>();
 
   useHotkeys('f', (e) => {
@@ -41,12 +40,27 @@ const MessageForm = ({ isVisible }: Props) => {
     }
   }, [isVisible]);
 
-  if (!user) {
+  if (user === undefined) {
     return null;
   }
 
+  if (user === null) {
+    return (
+      <p className="mb-6">
+        <button onClick={login} className="text-pink-600">
+          匿名ログイン
+        </button>
+        してコメントする
+      </p>
+    );
+  }
+
   const onSubmit = (data: Message) => {
-    addMessage(router.query.id as string, user.id, data.body);
+    addMessage('global', {
+      name: user.name,
+      emoji: user.emoji,
+      body: data.body,
+    });
     reset();
   };
 
@@ -60,7 +74,7 @@ const MessageForm = ({ isVisible }: Props) => {
     <form className="mb-1 text-right" onSubmit={handleSubmit(onSubmit)}>
       <TextareaAutosize
         onKeyDown={handleKeyDown}
-        placeholder="ちょっと一息 ☕️"
+        placeholder="意気込みなど"
         autoFocus
         className="bg-transparent w-full resize-none rounded"
         {...rest}

@@ -31,6 +31,7 @@ const YouTubePlayer = ({
         onReady={(event) => {
           onReady(event);
           event.target.setShuffle(true);
+          event.target.nextVideo();
         }}
         className="youtube-space"
         onStateChange={onStateChange}

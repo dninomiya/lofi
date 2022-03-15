@@ -1,10 +1,9 @@
-import { initializeApp, getApps } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { Analytics, getAnalytics } from 'firebase/analytics';
+import { getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
-import { getMessaging } from 'firebase/messaging';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCc478GVD0tcVcw8kpWS1E3nwEDGXE_5bg',
@@ -18,11 +17,15 @@ const firebaseConfig = {
   measurementId: 'G-WGFZEC7GNN',
 };
 
+export let ga: Analytics;
+
 if (!getApps()?.length) {
   initializeApp(firebaseConfig);
+  if (typeof window !== 'undefined') {
+    ga = getAnalytics();
+  }
 }
 
-const analytics = getAnalytics();
 export const db = getFirestore();
 export const storage = getStorage();
 export const auth = getAuth();

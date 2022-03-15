@@ -56,3 +56,7 @@ a,
 button:not([disabled]) {
   cursor: url(/images/pointer.svg), pointer;
 }
+
+.emoji-mart-emoji span {
+  display: block;
+}

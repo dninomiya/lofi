@@ -4,9 +4,13 @@ import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/client';
 import { User } from '../types/User';
 const randomEmoji = require('random-unicode-emoji');
+const unicode = require('emoji-unicode-map');
 
 export const createUser = (id: string) => {
   const ref = doc(db, `users/${id}`);
+  const emoji = unicode.get(randomEmoji.random({ count: 1 })[0]);
+  console.log(emoji);
+
   return setDoc(ref, {
     id,
     name: 'noname',
@@ -14,7 +18,7 @@ export const createUser = (id: string) => {
     lastLoggedInAt: Date.now(),
     lv: 1,
     tomato: 0,
-    emoji: randomEmoji.random({ count: 1 })[0] as string,
+    emoji,
   } as User);
 };
 
