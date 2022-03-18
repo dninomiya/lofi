@@ -4,4 +4,5 @@ export type Message = {
   createdAt: number;
   name: string;
   emoji: string;
+  likeCount?: number;
 };

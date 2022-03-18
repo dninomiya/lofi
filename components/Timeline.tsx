@@ -4,11 +4,14 @@ import { ja } from 'date-fns/locale';
 import { Emoji } from 'emoji-mart';
 import { useEffect, useState } from 'react';
 import Linkify from 'react-linkify';
-import { getMessagesQuery } from '../services/RoomService';
+import { useAuth } from '../providers/AuthProvider';
+import { addLike, getMessagesQuery } from '../services/RoomService';
 import { Message } from '../types/Message';
+import { classNames } from '../utils/classNames';
 
 const Timeline = () => {
   const [messages, setMessages] = useState<Message[]>();
+  const user = useAuth();
 
   useEffect(() => {
     return onSnapshot(getMessagesQuery('global'), (snapshot) => {
@@ -32,9 +35,22 @@ const Timeline = () => {
         <ul className="space-y-4">
           {messages?.map((message) => (
             <li key={message.id}>
-              <p className="break-words">
-                <Linkify>{message.body}</Linkify>
-              </p>
+              <div className="flex gap-4">
+                <p className="break-words flex-1">
+                  <Linkify>{message.body}</Linkify>
+                </p>
+                {user && (
+                  <button
+                    onClick={() => addLike('global', message.id)}
+                    className={classNames(
+                      'text-sm whitespace-nowrap text-gray-500',
+                      !message.likeCount && 'opacity-40'
+                    )}
+                  >
+                    ☕️ {message.likeCount?.toLocaleString()}
+                  </button>
+                )}
+              </div>
               {message.emoji && message.name && (
                 <p className="flex mt-1 items-center space-x-1 flex-wrap text-xs opacity-60">
                   <Emoji native size={16} emoji={message.emoji} />

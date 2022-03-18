@@ -6,7 +6,9 @@ import {
   getDocs,
   orderBy,
   query,
+  increment,
   setDoc,
+  updateDoc,
 } from '@firebase/firestore';
 import useSWR from 'swr';
 import { db } from '../firebase/client';
@@ -48,6 +50,13 @@ export const addMessage = async (
     createdAt: Date.now(),
   };
   return addDoc(messages, message);
+};
+
+export const addLike = (roomId: string, messageId: string) => {
+  const docRef = doc(db, `rooms/${roomId}/messages/${messageId}`);
+  return updateDoc(docRef, {
+    likeCount: increment(1),
+  });
 };
 
 export const getMessagesQuery = (roomId: string) => {
