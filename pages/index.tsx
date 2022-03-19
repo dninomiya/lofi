@@ -46,10 +46,10 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (user !== undefined) {
+    if (user?.online) {
       connect(user?.id);
     }
-  }, [user]);
+  }, [user?.online]);
 
   useEffect(() => {
     const isClose = Boolean(localStorage.getItem('chatClose'));

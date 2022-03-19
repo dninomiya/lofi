@@ -55,7 +55,7 @@ const YouTubeControler = ({
       </button>
       {target && (
         <a
-          className="pl-2 flex-1"
+          className="pl-2 flex-1 min-w-0"
           href={target.playerInfo?.videoUrl}
           rel="noreferrer"
           target="_blank"

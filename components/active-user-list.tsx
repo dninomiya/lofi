@@ -42,22 +42,20 @@ const ActiveUserList = ({ users }: Props) => {
   }
 
   return (
-    <div>
-      <ul>
-        {users.map((user) => {
-          return (
-            <li key={user.id}>
-              <p>
-                <Emoji size={13} emoji={user.emoji} native /> {user.name}
-              </p>
-              <p className="text-xs opacity-40">
-                {user.startAt && getDuration(user.startAt)}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <ul className="space-y-2 hidden lg:block">
+      {users.map((user) => {
+        return (
+          <li key={user.id}>
+            <p className="text-sm">
+              <Emoji size={13} emoji={user.emoji} native /> {user.name}
+            </p>
+            <p className="text-xs opacity-40">
+              {user.startAt && getDuration(user.startAt)}
+            </p>
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 
