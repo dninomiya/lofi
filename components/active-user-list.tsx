@@ -30,10 +30,10 @@ const ActiveUserList = ({ users }: Props) => {
     });
 
     return (
-      formatDuration(duration, {
+      (formatDuration(duration, {
         locale: ja,
         delimiter: '',
-      }) + '経過'
+      }) || '0秒') + '経過'
     );
   };
 
