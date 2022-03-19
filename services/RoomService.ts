@@ -2,11 +2,13 @@ import {
   addDoc,
   collection,
   doc,
+  where,
   getDoc,
   getDocs,
   orderBy,
   query,
   increment,
+  onSnapshot,
   setDoc,
   updateDoc,
 } from '@firebase/firestore';
@@ -86,4 +88,17 @@ export const useRoom = (id?: string) => {
   });
 
   return data;
+};
+
+export const watchActiveUsers = (action: (users: User[]) => void) => {
+  const activeUsersRef = collection(db, 'users');
+  const q = query(
+    activeUsersRef,
+    where('online', '==', true),
+    orderBy('startAt', 'asc')
+  );
+  return onSnapshot(q, async (snap) => {
+    const users = snap.docs.map((doc) => doc.data() as User);
+    action(users);
+  });
 };

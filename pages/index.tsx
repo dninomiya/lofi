@@ -1,8 +1,8 @@
 import { onDisconnect, onValue, push, ref, set } from 'firebase/database';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import ActiveUserList from '../components/active-user-list';
 import Clock from '../components/Clock';
 import MessageForm from '../components/MessageForm';
 import Timeline from '../components/Timeline';
@@ -13,6 +13,8 @@ import { db, rtDB } from '../firebase/client';
 import { Site } from '../lib/site';
 import { useAuth } from '../providers/AuthProvider';
 import { login } from '../services/AuthService';
+import { watchActiveUsers } from '../services/RoomService';
+import { User } from '../types/User';
 import { classNames } from '../utils/classNames';
 
 const Home: NextPage = () => {
@@ -20,10 +22,11 @@ const Home: NextPage = () => {
   const [onlineCount, setOnlineCount] = useState<number>();
   const [isChatOpen, setIsChatOpen] = useState<any>(true);
   const [playerState, setPlayerState] = useState<number>();
+  const [activeUsers, setActiveUsers] = useState<User[]>();
   const user = useAuth();
 
-  const connect = () => {
-    const myConnectionsRef = ref(rtDB, `connectedUsers/${Date.now()}`);
+  const connect = (id?: string) => {
+    const myConnectionsRef = ref(rtDB, `connectedUsers/${id || Date.now()}`);
     const connectedRef = ref(rtDB, '.info/connected');
     onValue(connectedRef, (snap) => {
       if (snap.val() === true) {
@@ -34,20 +37,33 @@ const Home: NextPage = () => {
     });
   };
 
-  const getOnlineCount = async () => {
+  const watchOnlineCount = () => {
     const statusRef = doc(db, 'status/online');
-    onSnapshot(statusRef, (snap) => {
+    return onSnapshot(statusRef, (snap) => {
       const status = snap.data() as any;
       setOnlineCount(status?.count || 0);
     });
   };
 
   useEffect(() => {
+    if (user !== undefined) {
+      connect(user?.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
     const isClose = Boolean(localStorage.getItem('chatClose'));
     setIsChatOpen(!isClose);
 
-    connect();
-    getOnlineCount();
+    const unsubscribeOnlineCount = watchOnlineCount();
+    const unsubscribeActiveUsers = watchActiveUsers((users) => {
+      setActiveUsers(users);
+    });
+
+    return () => {
+      unsubscribeOnlineCount();
+      unsubscribeActiveUsers();
+    };
   }, []);
 
   const initTarget = (event: any) => {
@@ -100,7 +116,7 @@ const Home: NextPage = () => {
 
           <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 overflow-hidden">
             <div
-              className="py-4 px-6 col-span-2 lg:block hidden"
+              className="py-4 px-6 col-span-2 lg:block hidden space-y-6"
               onClick={() => target?.playVideo()}
             >
               {onlineCount !== undefined && (
@@ -108,6 +124,8 @@ const Home: NextPage = () => {
                   {onlineCount.toLocaleString()}人がもくもく中...
                 </p>
               )}
+
+              <ActiveUserList users={activeUsers} />
             </div>
             <div
               className={classNames(

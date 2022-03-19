@@ -5,4 +5,8 @@ export type User = {
   tomato: number;
   lv: number;
   lastLoggedInAt: number;
+  online: boolean;
+  totalWorkTime: number;
+  startAt?: number;
+  keepDays: number;
 };

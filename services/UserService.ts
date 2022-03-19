@@ -1,4 +1,4 @@
-import { addDays, formatDuration, intervalToDuration } from 'date-fns';
+import { addDays, format, formatDuration, intervalToDuration } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/client';
@@ -19,6 +19,9 @@ export const createUser = (id: string) => {
     lv: 1,
     tomato: 0,
     emoji,
+    online: false,
+    totalWorkTime: 0,
+    keepDays: 1,
   } as User);
 };
 

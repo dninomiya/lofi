@@ -39,17 +39,21 @@ const Timeline = () => {
                 <p className="break-words flex-1">
                   <Linkify>{message.body}</Linkify>
                 </p>
-                {user && (
-                  <button
-                    onClick={() => addLike('global', message.id)}
-                    className={classNames(
-                      'text-sm whitespace-nowrap text-gray-500',
-                      !message.likeCount && 'opacity-40'
-                    )}
-                  >
-                    ☕️ {message.likeCount?.toLocaleString()}
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    if (user) {
+                      addLike('global', message.id);
+                    } else {
+                      alert('ログインしてね');
+                    }
+                  }}
+                  className={classNames(
+                    'text-sm whitespace-nowrap text-gray-500',
+                    !message.likeCount && 'opacity-40'
+                  )}
+                >
+                  ☕️ {message.likeCount?.toLocaleString()}
+                </button>
               </div>
               {message.emoji && message.name && (
                 <p className="flex mt-1 items-center space-x-1 flex-wrap text-xs opacity-60">

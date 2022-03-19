@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { auth, db } from '../firebase/client';
-import { createUser } from '../services/UserService';
+import { createUser, updateUser } from '../services/UserService';
 import { User } from '../types/User';
 
 const AuthContext = createContext<User | null | undefined>(undefined);
@@ -36,6 +36,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (user && !user.online) {
+      updateUser(user.id, {
+        online: true,
+        startAt: Date.now(),
+      });
+    }
+  }, [user]);
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 };
