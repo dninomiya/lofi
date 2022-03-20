@@ -30,7 +30,7 @@ const Home: NextPage = () => {
     const connectedRef = ref(rtDB, '.info/connected');
     onValue(connectedRef, (snap) => {
       if (snap.val() === true) {
-        const con = push(myConnectionsRef, true);
+        const con = push(myConnectionsRef);
         onDisconnect(con).remove();
         set(con, true);
       }
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
     if (user !== undefined) {
       connect(user?.id);
     }
-  }, [user === undefined]);
+  }, [user]);
 
   useEffect(() => {
     const isClose = Boolean(localStorage.getItem('chatClose'));
