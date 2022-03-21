@@ -8,8 +8,6 @@ const unicode = require('emoji-unicode-map');
 
 export const createUser = (id: string) => {
   const ref = doc(db, `users/${id}`);
-  const emoji =
-    unicode.get(randomEmoji.random({ count: 1 })[0]) || 'space_invader';
 
   return setDoc(ref, {
     id,
@@ -18,7 +16,7 @@ export const createUser = (id: string) => {
     lastLoggedInAt: Date.now(),
     lv: 1,
     tomato: 0,
-    emoji,
+    emoji: 'bust_in_silhouette emoji',
     online: false,
     totalWorkTime: 0,
     keepDays: 1,

@@ -1,4 +1,4 @@
-import { BaseEmoji, Emoji, Picker } from 'emoji-mart';
+import { Emoji, Picker } from 'emoji-mart';
 import 'emoji-mart/css/emoji-mart.css';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';

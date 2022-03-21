@@ -1,4 +1,3 @@
-import { onDisconnect, onValue, push, ref, set } from 'firebase/database';
 import { doc, onSnapshot } from 'firebase/firestore';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
@@ -9,7 +8,7 @@ import Timeline from '../components/Timeline';
 import UserProfile from '../components/UserProfileEditor';
 import YouTubeControler from '../components/YouTubeControler';
 import YouTubePlayer from '../components/YouTubePlayer';
-import { db, rtDB } from '../firebase/client';
+import { db } from '../firebase/client';
 import { Site } from '../lib/site';
 import { useAuth } from '../providers/AuthProvider';
 import { login } from '../services/AuthService';
@@ -25,18 +24,6 @@ const Home: NextPage = () => {
   const [activeUsers, setActiveUsers] = useState<User[]>();
   const user = useAuth();
 
-  const connect = (id?: string) => {
-    const myConnectionsRef = ref(rtDB, `connectedUsers/${id || Date.now()}`);
-    const connectedRef = ref(rtDB, '.info/connected');
-    onValue(connectedRef, (snap) => {
-      if (snap.val() === true) {
-        const con = push(myConnectionsRef);
-        onDisconnect(con).remove();
-        set(con, true);
-      }
-    });
-  };
-
   const watchOnlineCount = () => {
     const statusRef = doc(db, 'status/online');
     return onSnapshot(statusRef, (snap) => {
@@ -44,12 +31,6 @@ const Home: NextPage = () => {
       setOnlineCount(status?.count || 0);
     });
   };
-
-  useEffect(() => {
-    if (user !== undefined) {
-      connect(user?.id);
-    }
-  }, [user]);
 
   useEffect(() => {
     const isClose = Boolean(localStorage.getItem('chatClose'));
@@ -101,7 +82,11 @@ const Home: NextPage = () => {
             >
               💬
             </button>
-            {user ? <UserProfile /> : <button onClick={login}>参加</button>}
+            {user ? (
+              <UserProfile />
+            ) : (
+              <button onClick={login}>Twitterでログイン</button>
+            )}
             <a
               href="https://github.com/dninomiya/lofi/wiki"
               target="_blank"
