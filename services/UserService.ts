@@ -1,10 +1,8 @@
-import { addDays, format, formatDuration, intervalToDuration } from 'date-fns';
+import { addDays, formatDuration, intervalToDuration } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/client';
 import { User } from '../types/User';
-const randomEmoji = require('random-unicode-emoji');
-const unicode = require('emoji-unicode-map');
 
 export const createUser = (id: string) => {
   const ref = doc(db, `users/${id}`);
