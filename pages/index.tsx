@@ -110,7 +110,7 @@ const Home: NextPage = () => {
                 </p>
               )}
 
-              <ActiveUserList users={activeUsers} />
+              {/* <ActiveUserList users={activeUsers} /> */}
             </div>
             <div
               className={classNames(
